@@ -18,11 +18,11 @@ namespace BankingApp {
         }
 
         public void Withdraw(double Ammount) {
-            if (Ammount <= 0) {
+            if (Ammount <= 0) { // accounts for negative withdraw
                 Console.WriteLine("Error: can only enter positive number");
                 return; }
             else 
-            if (Ammount > Balance) {
+            if (Ammount > Balance) { //Accounts for overdraft
                 Console.WriteLine("ERROR: Insufficient Funds");
                 return;
             }
