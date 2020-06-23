@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BankingApp.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -28,9 +29,15 @@ namespace BankingApp {
 
         private bool InsufficientFunds(double Ammount) {//refactoring
             if (Ammount > Balance) {
-                Console.WriteLine("ERROR: Insufficient Funds.");
-                return true;
+                var msg = $"Balance is {Balance}; Withdraw ammount is {Ammount}";
+                var ex = new InsufficientFundsException(msg); //Exception.Insuff...
+                ex.AccountNumber = AccountNumber;
+                ex.Description = Description;
+                ex.Balance = Balance;
+                ex.Ammount = Ammount;
+                throw ex;
             }
+  
             return false;
         }
 
@@ -66,14 +73,21 @@ namespace BankingApp {
             if (IsAmmountNegative(Ammount)) { //inserts new method to refactor code and returns bool
                 return false;
             }
+            InsufficientFunds(Ammount);
+
             Balance += Ammount;
             Console.WriteLine($"Deposit successful! Current Balance: {Balance}");
             return true;
         }
 
         public bool Withdraw(double Ammount) {
-            if (IsAmmountNegative(Ammount) 
-                || InsufficientFunds(Ammount)) { //inserts new method to refactor code and returns bool
+            if (IsAmmountNegative(Ammount)) { //inserts new method to refactor code and returns bool
+                return false;
+            }
+            try {
+                InsufficientFunds(Ammount);
+            } catch (Exceptions.InsufficientFundsException ex) {
+                Console.WriteLine(ex.Message);
                 return false;
             }
             Balance -= Ammount;

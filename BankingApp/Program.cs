@@ -4,7 +4,7 @@ namespace BankingApp {
     class Program {//default access modifier internal
 
         static void Main(string[] args) {;
-
+            /*
             var chk1 = new Checking();
             chk1.Deposit(100);
             chk1.WriteCheck("Cash", 10, 101);
@@ -17,10 +17,10 @@ namespace BankingApp {
             Console.WriteLine($"Balance is {sav1.CheckBalance()}");
 
             Console.WriteLine($"Routing number is {Account.GetRoutingNumber()}"); //use name of class.method to call static method
-
+            */
             var acct1 = new Account();//creates an instance of account class
             var acct2 = new Account();
-
+            
             acct1.Deposit(100000);
             acct1.Withdraw(60000);
             acct1.Withdraw(50000);
