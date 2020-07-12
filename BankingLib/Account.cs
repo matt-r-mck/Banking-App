@@ -4,22 +4,29 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace BankingApp {
-    public class Account { //default access modifier internal
-        //properties
-        private static int NextAccountNumber = 1; //must be set to static so that all instances call same value
+    public class Account { 
+        
+        //Must be set to static so that all instances receive same value.
+        private static int NextAccountNumber = 1; 
         private static string RoutingNumber = "42361088";
-        public int AccountNumber { get; private set; }//can be seen publicly, can be set privately
-        private double Balance { get; set; } = 0;//can call balance, but can't see it
+        public int AccountNumber { get; private set; }
+        private double Balance { get; set; } = 0;
         public string Description { get; set; }
-        private static Account[] AccountArray = new Account[5]; //needed to print statements makes AccountArray an array type. allows 5 total acounts
+        private static Account[] AccountArray = new Account[5]; 
         private static int NextIndex = 0;
 
-        public Account() { //default constructor sets initial name for account
-            this.AccountNumber = NextAccountNumber++; //sets new account number to 1 first, increments
+        public Account() { 
+            this.AccountNumber = NextAccountNumber++; 
             this.Description = "New Account";
         }
 
-        private bool IsAmmountNegative(double Ammount) { //refactoring duplicated code
+        /// <summary>
+        /// Refactoring of fmethod to check if passed ammount is negative.
+        /// Supports deposit and withdraw methods.
+        /// </summary>
+        /// <param name="Ammount"> Ammount user is trying to pass in callinng method. </param>
+        /// <returns> Exception if negative, false if else. </returns>
+        private bool IsAmmountNegative(double Ammount) { 
             if (Ammount < 0) {
                 Console.WriteLine("ERROR: Must enter positive number.");
                 return true;
@@ -27,10 +34,16 @@ namespace BankingApp {
             return false;
         }
 
-        private bool InsufficientFunds(double Ammount) {//refactoring
+        /// <summary>
+        /// Refactoring of an insufficient funds check.
+        /// Supports any withdraw method.
+        /// </summary>
+        /// <param name="Ammount"> Ammount user is attampting to withdraw. </param>
+        /// <returns> Exception if insufficient, false if else. </returns>
+        private bool InsufficientFunds(double Ammount) { 
             if (Ammount > Balance) {
                 var msg = $"Balance is {Balance}; Withdraw ammount is {Ammount}";
-                var ex = new InsufficientFundsException(msg); //Exception.Insuff...
+                var ex = new InsufficientFundsException(msg); 
                 ex.AccountNumber = AccountNumber;
                 ex.Description = Description;
                 ex.Balance = Balance;
@@ -41,18 +54,31 @@ namespace BankingApp {
             return false;
         }
 
-        public static void AddAccount(Account AccountInstance) { //adds accounts to array
+        /// <summary>
+        /// Method adds account to our bank.
+        /// </summary>
+        /// <param name="AccountInstance"> Information from instance of created account. </param>
+        public static void AddAccount(Account AccountInstance) { 
             AccountArray[NextIndex] = AccountInstance;
             NextIndex++;
         }
 
-        public static void ListAccounts() { //gets balances and id's to print statement
+        /// <summary>
+        /// Writes info for all of our accounts to console.
+        /// </summary>
+        public static void ListAccounts() { 
             for(var idx = 0; idx < NextIndex; idx++) {
                 var account = AccountArray[idx];
                 Console.WriteLine($"ID: {account.AccountNumber}; Desc: {account.Description}; Bal: {account.CheckBalance()}");
             }
         }
 
+        /// <summary>
+        /// Transfer method calls both withdraw and deposit to move money to and from respective accounts.
+        /// </summary>
+        /// <param name="ToAccount"> Account to transfer funds to. </param>
+        /// <param name="Ammount"> Ammount to be moved. </param>
+        /// <returns> Exception if bubbles up from called methods, true and message if worked. </returns>
         public bool Transfer(Account ToAccount, double Ammount) {
             var success = Withdraw(Ammount);
             if (!success) {
@@ -69,8 +95,13 @@ namespace BankingApp {
                 return true;
         }
 
+        /// <summary>
+        /// Allows user to deposit money into account.
+        /// </summary>
+        /// <param name="Ammount"> Ammount to be deposited. </param>
+        /// <returns> Exception if bubbles up, True and message if worked. </returns>
         public bool Deposit(double Ammount) {
-            if (IsAmmountNegative(Ammount)) { //inserts new method to refactor code and returns bool
+            if (IsAmmountNegative(Ammount)) {
                 return false;
             }
             InsufficientFunds(Ammount);
@@ -80,8 +111,13 @@ namespace BankingApp {
             return true;
         }
 
+        /// <summary>
+        /// Allows user to make withdraws from accounts.
+        /// </summary>
+        /// <param name="Ammount"> Ammount to be withdwarn. </param>
+        /// <returns> Exception if bubbles up, True and message if worked. </returns>
         public bool Withdraw(double Ammount) {
-            if (IsAmmountNegative(Ammount)) { //inserts new method to refactor code and returns bool
+            if (IsAmmountNegative(Ammount)) { 
                 return false;
             }
             try {
@@ -95,11 +131,12 @@ namespace BankingApp {
             return true;
         }
 
+
         public double CheckBalance() {
             return Balance;
         }
  
-        public static string GetRoutingNumber() { //makinga method static == can call without an instance/constructor
+        public static string GetRoutingNumber() {
             return RoutingNumber;
         }
 
